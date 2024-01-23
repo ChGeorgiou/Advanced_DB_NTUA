@@ -1,0 +1,85 @@
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Sort [year#103 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(year#103 ASC NULLS FIRST, 200), ENSURE_REQUIREMENTS, [plan_id=2181]
+      +- HashAggregate(keys=[year#103], functions=[avg(dist#156), count(1)])
+         +- Exchange hashpartitioning(year#103, 200), ENSURE_REQUIREMENTS, [plan_id=2178]
+            +- HashAggregate(keys=[year#103], functions=[partial_avg(dist#156), partial_count(1)])
+               +- Project [year#103, pythonUDF0#530 AS dist#156]
+                  +- BatchEvalPython [get_distance(LAT#43, LON#44, Y#91, X#90)#155], [pythonUDF0#530]
+                     +- Project [year#103, LAT#43, LON#44, X#90, Y#91]
+                        +- ShuffledHashJoin [AREA#21], [PREC#95], Inner, BuildRight
+                           :- Exchange hashpartitioning(AREA#21, 200), ENSURE_REQUIREMENTS, [plan_id=2170]
+                           :  +- Project [year(DATE OCC#19) AS year#103, LAT#43, LON#44, AREA#21]
+                           :     +- Filter (((((((isnotnull(LAT#43) AND isnotnull(LON#44)) AND NOT (LAT#43 = 0.0)) AND NOT (LON#44 = 0.0)) AND isnotnull(Weapon Used Cd#33)) AND (Weapon Used Cd#33 <= 199.9)) AND (Weapon Used Cd#33 >= 100.0)) AND isnotnull(AREA#21))
+                           :        +- FileScan csv [DATE OCC#19,AREA#21,Weapon Used Cd#33,LAT#43,LON#44] Batched: false, DataFilters: [isnotnull(LAT#43), isnotnull(LON#44), NOT (LAT#43 = 0.0), NOT (LON#44 = 0.0), isnotnull(Weapon U..., Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/data.csv], PartitionFilters: [], PushedFilters: [IsNotNull(LAT), IsNotNull(LON), Not(EqualTo(LAT,0.0)), Not(EqualTo(LON,0.0)), IsNotNull(Weapon U..., ReadSchema: struct<DATE OCC:date,AREA:int,Weapon Used Cd:double,LAT:double,LON:double>
+                           +- Exchange hashpartitioning(PREC#95, 200), ENSURE_REQUIREMENTS, [plan_id=2171]
+                              +- Filter isnotnull(PREC#95)
+                                 +- FileScan csv [X#90,Y#91,PREC#95] Batched: false, DataFilters: [isnotnull(PREC#95)], Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/LAPD_Police_Stations.csv], PartitionFilters: [], PushedFilters: [IsNotNull(PREC)], ReadSchema: struct<X:double,Y:double,PREC:int>
+
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Sort [crime_count#223L DESC NULLS LAST], true, 0
+   +- Exchange rangepartitioning(crime_count#223L DESC NULLS LAST, 200), ENSURE_REQUIREMENTS, [plan_id=2245]
+      +- HashAggregate(keys=[division#197], functions=[avg(dist#205), count(1)])
+         +- Exchange hashpartitioning(division#197, 200), ENSURE_REQUIREMENTS, [plan_id=2242]
+            +- HashAggregate(keys=[division#197], functions=[partial_avg(dist#205), partial_count(1)])
+               +- Project [DIVISION#93 AS division#197, pythonUDF0#531 AS dist#205]
+                  +- BatchEvalPython [get_distance(LAT#43, LON#44, Y#91, X#90)#204], [pythonUDF0#531]
+                     +- Project [LAT#43, LON#44, X#90, Y#91, DIVISION#93]
+                        +- ShuffledHashJoin [PREC#183], [PREC#95], Inner, BuildRight
+                           :- Exchange hashpartitioning(PREC#183, 200), ENSURE_REQUIREMENTS, [plan_id=2234]
+                           :  +- Project [LAT#43, LON#44, AREA#21 AS PREC#183]
+                           :     +- Filter (((((((isnotnull(LAT#43) AND isnotnull(LON#44)) AND NOT (LAT#43 = 0.0)) AND NOT (LON#44 = 0.0)) AND isnotnull(Weapon Used Cd#33)) AND (Weapon Used Cd#33 <= 199.9)) AND (Weapon Used Cd#33 >= 100.0)) AND isnotnull(AREA#21))
+                           :        +- FileScan csv [AREA#21,Weapon Used Cd#33,LAT#43,LON#44] Batched: false, DataFilters: [isnotnull(LAT#43), isnotnull(LON#44), NOT (LAT#43 = 0.0), NOT (LON#44 = 0.0), isnotnull(Weapon U..., Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/data.csv], PartitionFilters: [], PushedFilters: [IsNotNull(LAT), IsNotNull(LON), Not(EqualTo(LAT,0.0)), Not(EqualTo(LON,0.0)), IsNotNull(Weapon U..., ReadSchema: struct<AREA:int,Weapon Used Cd:double,LAT:double,LON:double>
+                           +- Exchange hashpartitioning(PREC#95, 200), ENSURE_REQUIREMENTS, [plan_id=2235]
+                              +- Filter isnotnull(PREC#95)
+                                 +- FileScan csv [X#90,Y#91,DIVISION#93,PREC#95] Batched: false, DataFilters: [isnotnull(PREC#95)], Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/LAPD_Police_Stations.csv], PartitionFilters: [], PushedFilters: [IsNotNull(PREC)], ReadSchema: struct<X:double,Y:double,DIVISION:string,PREC:int>
+
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Sort [year#103 ASC NULLS FIRST], true, 0
+   +- Exchange rangepartitioning(year#103 ASC NULLS FIRST, 200), ENSURE_REQUIREMENTS, [plan_id=2302]
+      +- HashAggregate(keys=[year#103], functions=[avg(min_distance#261), count(1)])
+         +- Exchange hashpartitioning(year#103, 200), ENSURE_REQUIREMENTS, [plan_id=2299]
+            +- HashAggregate(keys=[year#103], functions=[partial_avg(min_distance#261), partial_count(1)])
+               +- HashAggregate(keys=[ID#230L, year#103], functions=[min(dist#243)])
+                  +- Exchange hashpartitioning(ID#230L, year#103, 200), ENSURE_REQUIREMENTS, [plan_id=2295]
+                     +- HashAggregate(keys=[ID#230L, year#103], functions=[partial_min(dist#243)])
+                        +- Project [year#103, ID#230L, pythonUDF0#532 AS dist#243]
+                           +- BatchEvalPython [get_distance(LAT#43, LON#44, Y#91, X#90)#242], [pythonUDF0#532]
+                              +- BroadcastNestedLoopJoin BuildRight, Cross
+                                 :- Project [year(DATE OCC#19) AS year#103, LAT#43, LON#44, monotonically_increasing_id() AS ID#230L]
+                                 :  +- Filter ((((((isnotnull(LAT#43) AND isnotnull(LON#44)) AND NOT (LAT#43 = 0.0)) AND NOT (LON#44 = 0.0)) AND isnotnull(Weapon Used Cd#33)) AND (Weapon Used Cd#33 <= 199.9)) AND (Weapon Used Cd#33 >= 100.0))
+                                 :     +- FileScan csv [DATE OCC#19,Weapon Used Cd#33,LAT#43,LON#44] Batched: false, DataFilters: [isnotnull(LAT#43), isnotnull(LON#44), NOT (LAT#43 = 0.0), NOT (LON#44 = 0.0), isnotnull(Weapon U..., Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/data.csv], PartitionFilters: [], PushedFilters: [IsNotNull(LAT), IsNotNull(LON), Not(EqualTo(LAT,0.0)), Not(EqualTo(LON,0.0)), IsNotNull(Weapon U..., ReadSchema: struct<DATE OCC:date,Weapon Used Cd:double,LAT:double,LON:double>
+                                 +- BroadcastExchange IdentityBroadcastMode, [plan_id=2289]
+                                    +- FileScan csv [X#90,Y#91] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/LAPD_Police_Stations.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<X:double,Y:double>
+
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Sort [crime_count#328L DESC NULLS LAST], true, 0
+   +- Exchange rangepartitioning(crime_count#328L DESC NULLS LAST, 200), ENSURE_REQUIREMENTS, [plan_id=2377]
+      +- HashAggregate(keys=[DIVISION#93], functions=[avg(dist#289), count(1)])
+         +- Exchange hashpartitioning(DIVISION#93, 200), ENSURE_REQUIREMENTS, [plan_id=2374]
+            +- HashAggregate(keys=[DIVISION#93], functions=[partial_avg(dist#289), partial_count(1)])
+               +- Project [DIVISION#93, dist#289]
+                  +- Filter (rank#299 = 1)
+                     +- Window [row_number() windowspecdefinition(ID#277L, dist#289 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rank#299], [ID#277L], [dist#289 ASC NULLS FIRST]
+                        +- WindowGroupLimit [ID#277L], [dist#289 ASC NULLS FIRST], row_number(), 1, Final
+                           +- Sort [ID#277L ASC NULLS FIRST, dist#289 ASC NULLS FIRST], false, 0
+                              +- Exchange hashpartitioning(ID#277L, 200), ENSURE_REQUIREMENTS, [plan_id=2366]
+                                 +- WindowGroupLimit [ID#277L], [dist#289 ASC NULLS FIRST], row_number(), 1, Partial
+                                    +- Sort [ID#277L ASC NULLS FIRST, dist#289 ASC NULLS FIRST], false, 0
+                                       +- Project [ID#277L, DIVISION#93, pythonUDF0#533 AS dist#289]
+                                          +- BatchEvalPython [get_distance(LAT#43, LON#44, Y#91, X#90)#288], [pythonUDF0#533]
+                                             +- BroadcastNestedLoopJoin BuildRight, Cross
+                                                :- Project [LAT#43, LON#44, monotonically_increasing_id() AS ID#277L]
+                                                :  +- Filter ((((((isnotnull(LAT#43) AND isnotnull(LON#44)) AND NOT (LAT#43 = 0.0)) AND NOT (LON#44 = 0.0)) AND isnotnull(Weapon Used Cd#33)) AND (Weapon Used Cd#33 <= 199.9)) AND (Weapon Used Cd#33 >= 100.0))
+                                                :     +- FileScan csv [Weapon Used Cd#33,LAT#43,LON#44] Batched: false, DataFilters: [isnotnull(LAT#43), isnotnull(LON#44), NOT (LAT#43 = 0.0), NOT (LON#44 = 0.0), isnotnull(Weapon U..., Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/data.csv], PartitionFilters: [], PushedFilters: [IsNotNull(LAT), IsNotNull(LON), Not(EqualTo(LAT,0.0)), Not(EqualTo(LON,0.0)), IsNotNull(Weapon U..., ReadSchema: struct<Weapon Used Cd:double,LAT:double,LON:double>
+                                                +- BroadcastExchange IdentityBroadcastMode, [plan_id=2358]
+                                                   +- FileScan csv [X#90,Y#91,DIVISION#93] Batched: false, DataFilters: [], Format: CSV, Location: InMemoryFileIndex(1 paths)[hdfs://okeanos-master:54310/user/user/csv_files/LAPD_Police_Stations.csv], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<X:double,Y:double,DIVISION:string>
+
+
